@@ -1,0 +1,227 @@
+TECHNICAL INTERVIEW PRACTICE: PYTHON
+Capturing Rain Water
+A histogram is a chart which consists of a series of bars. A Python list can represent a histogram by containing integers, each of which represents the height of a single bar.
+
+The list [4, 2, 1, 3, 0, 1, 2] would represent the following histogram:
+
+histogram without water
+For our problem, imagine that rainwater has fallen over the histogram and collected between the bars. Here’s how the previous histogram would look filled with water:
+
+histogram with water
+We need to write a function which calculates the total water captured from an input of a list of integers.
+
+Our function would return 6 from the previous example.
+
+Throughout this project, run your code by saving it in the text editor, then typing python3 script.py in the terminal and pressing enter.
+
+After you complete the project, check out our video walkthrough which shows how to solve the problem with a whiteboard.
+
+
+https://youtu.be/Ke6JtGIU4yc
+
+
+Tasks
+2/24Complete
+Mark the tasks as complete by checking them off
+Modeling the Problem
+1.
+Our first step to writing our function is to create some inputs so we’re covering all aspects of the problem
+
+We’ll start with an input where we can easily determine the answer. Add the following variable to script.py:
+
+small = [1, 0, 1]
+2.
+Now let’s use a more complicated input: medium = [4, 2, 1, 3, 0, 1, 2]
+
+This was given to us when the problem was introduced.
+
+We can learn two things from this input:
+
+Water only rises to the second highest wall.
+A submerged bar will “displace” water.
+3.
+Let’s do one more input:
+
+edge_case = [0, 2, 0]
+
+This input will collect no water, but it’s good to test these cases where something unusual might happen.
+
+Naive Solution: Finding the Maximums
+4.
+Water is filled at each index based on the “walls” to the left and right. By wall, we mean the greatest value.
+
+Define the rain_water() function, which has one parameter: histogram, a Python list of positive integers.
+
+5.
+Let’s start by finding the maximum value at a lesser index for each value in the list.
+
+Iterate from index 1 to the second to last index of histogram.
+
+Within the loop, declare left_values and set it to every value up to but not including the current index.
+
+6.
+Below left_values, declare another variable: left_max. This should be the maximum value within left_values.
+
+7.
+Add print() statements to check out the variables.
+
+print("Left max is: {0}".format(left_max))
+Test rain_water() with the inputs we declared earlier. Does everything work as expected? If not, debug!
+
+8.
+Add two new variables to the loop: right_values and right_max.
+
+Use the same logic as before, but for values at indices greater than the current index.
+
+9.
+Test your function again with added print statements.
+
+You should feel confident of the maximum values to the left and right of indices 1 through the second to last index.
+
+Naive Solution: Total Volume
+10.
+We know from examining the test inputs that we will only fill water at each index up to the second highest wall.
+
+Make a fill_mark variable and set it to the lesser of the two maximums.
+
+11.
+Now, at the beginning of the function outside of the loop, declare a total_water variable set to 0.
+
+12.
+At each iteration, add fill_mark to total_water.
+
+Return total_water at the end of the function.
+
+13.
+Did you spot the mistake? We forgot to account for the displaced water!
+
+Go back and subtract the current value from fill_mark.
+
+Test your function again.
+
+14.
+We found another bug! This is why sample inputs are so helpful, especially that edge case.
+
+To isolate the problem, test your function with the input [0, 1, 0].
+
+The maximums are 0 but we’re subtracting the current value of 1. This leads to a negative return value!
+
+Change the function so it only adds fill_mark - current_value if the result is positive.
+
+Naive Solution: Benchmark
+15.
+We’ve solved the problem, but how efficient is our solution?
+
+In terms of big O time complexity, we’re visiting nearly every element in our loop so that’s at least N.
+
+Within the loop, we’re making copies of smaller parts of the list and calculating maximum values.
+
+Copying and calculating a maximum are both linear operations, which bring the total complexity to O(N^2).
+
+We’ve imported a function, time() from the native Python module time for you to observe the efficiency in a different way.
+
+Use a print statement to write time() to the screen.
+
+16.
+time() will return the number of seconds since January 1, 1970, 00:00:00 (UTC), also known as the epoch.
+
+We can use this as a rough measure of how long our code takes to run by storing time() in a variable, running our code, then printing the difference between our start and time().
+
+Try this with our test inputs. Even with a quadratic time complexity, this won’t take long.
+
+Optimal Solution: Storing The Max
+17.
+Now that we’ve written a quadratic solution, let’s optimize!
+
+Examining our code, we can see we’re making a lot of copies that we only use to calculate the maximum value. That seems like a good place to focus our optimization.
+
+Define a optimized_rain_water() function which has a single parameter: histogram.
+
+18.
+To remove the copying, we need another way to calculate the max.
+
+We can do this by moving through the list and comparing the current value to our current max. If the current value is greater than max_value, we set max_value to the current value.
+
+Our max_value should default to the first element in histogram.
+
+To start, print max_value in each iteration of the loop.
+
+19.
+Having the max is good, but our problem requires us to know the relative max at every index.
+
+Alter optimized_rain_water() so it initializes an empty list of left_maxes and adds the max_value variable to left_maxes in each iteration.
+
+Now, we have a list which tracks the maximum value seen at each index moving from the left to the right of histogram.
+
+20.
+Now we need to create a similar list of maxes for our “right” walls.
+
+Reset max to be the value at the last index and declare an empty list as right_maxes.
+
+Below the loop which populates left_maxes, make another loop which iterates from the last index to the first index.
+
+Follow the same logic as before where we check if the current value is greater than our max, set the max if necessary, and add max_value to right_maxes.
+
+When the loop concludes, use .reverse() on right_maxes so they match the direction of right to left.
+
+Test it out with your inputs. You should have two lists, left_maxes which tracks the max moving from left to right andright_maxes which tracks the max from right to left.
+
+21.
+Within optimize_rain_water() at the top of the function make a total variable set to 0.
+
+Make one final loop through histogram:
+
+Take the min() of the two maxes at the current index (one from left_maxes, one from right_maxes)
+Subtract the current value from the result of min()
+Add the result to total
+Test out your optimized function with the inputs.
+
+Optimal Solution: Benchmark
+22.
+Our optimal solution runs in a linear time complexity, or O(N). We have multiple loops through the input, but none of the loops are nested and there is no copying.
+
+Perform the same benchmark on the optimized solution. Store the start with time(), run the optimized function with inputs, and print the difference of time() - start.
+
+How does it compare with the naive version?
+
+For smaller inputs, the naive version may outperform the optimal solution!!!
+
+23.
+As mentioned before, these inputs are relatively small. Let’s do one last benchmark with a larger input to see the difference.
+
+Run the same benchmarks with start and time() for both functions, but this time use [i for i in range(10000)] as the input.
+
+On our machine, the naive version took a full 2 seconds to run while the optimal version finished in one half of a thousandth of a second!
+
+24.
+Experiment!
+
+Can you refactor the code?
+
+Here’s a hint, is the right_maxes list necessary to create or can we combine the last two loops?
+
+Test out different inputs! Have fun!
+
+
+Capturing Rain Water
+2/24Complete
+
+
+
+
+
+
+
+from time import time
+
+
+####### TEST INPUTS HERE
+
+
+####### NAIVE SOLUTION HERE
+
+
+####### OPTIMIZED SOLUTION HERE
+
+
+####### BENCHMARKING HERE
